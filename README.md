@@ -2,15 +2,21 @@
 
 Script único en PowerShell para optimizar Windows 10 de forma segura y reversible.
 
-## Uso rápido (automático, sin hacer nada)
+## La forma más fácil: UN SOLO archivo (recomendado)
 
-La forma más cómoda en Windows: **doble clic en `Optimizar-Windows10.bat`**.
+**Doble clic en `Optimizar-Windows10-TODO-EN-UNO.bat`**.
 
+- Es un único archivo que ya lleva TODO dentro (no necesita el `.ps1` aparte).
 - Se auto-eleva a Administrador (aparece el aviso de UAC → pulsa **Sí**).
 - Ejecuta todas las optimizaciones **seguras** solo, sin preguntar.
-- Al terminar, recomienda reiniciar.
+- No usa `bash` ni WSL, así que funciona aunque WSL esté desactivado o en una máquina virtual.
 
-> Importante: `Optimizar-Windows10.bat` y `Optimizar-Windows10.ps1` deben estar en la **misma carpeta**.
+> No importa en qué carpeta esté ni desde dónde lo abras: funciona con doble clic.
+
+## Opción con dos archivos (`.bat` + `.ps1`)
+
+Si prefieres tener el script visible por separado, usa `Optimizar-Windows10.bat`
+junto a `Optimizar-Windows10.ps1` en la **misma carpeta** y doble clic en el `.bat`.
 
 Para incluir también la reparación profunda (DISM + SFC, más lenta), desde una consola:
 
@@ -19,6 +25,9 @@ powershell -ExecutionPolicy Bypass -File ".\Optimizar-Windows10.ps1" -Auto -Deep
 ```
 
 ### Alternativa Git Bash / WSL
+
+> Nota: si al usar `bash` ves `wsl: Nested virtualization is not supported`, tu PC
+> no puede ejecutar WSL. Usa entonces el archivo `.bat` (funciona sin bash).
 
 ```bash
 bash optimizar-windows10.sh          # automático
