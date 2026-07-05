@@ -14,13 +14,30 @@
     Autor   : Guía de optimización Windows 10
     Versión : 1.0
     SO      : Windows 10
+
+.PARAMETER Auto
+    Ejecuta automáticamente todas las optimizaciones SEGURAS sin preguntar
+    ni mostrar el menú. Ideal para lanzarlo desde el .bat con doble clic.
+    No incluye pasos muy lentos (DISM/SFC) salvo que se use también -Deep.
+
+.PARAMETER Deep
+    Junto con -Auto, incluye además DISM + SFC (puede tardar 20-45 min).
+
+.EXAMPLE
+    powershell -ExecutionPolicy Bypass -File ".\Optimizar-Windows10.ps1" -Auto
 #>
+
+param(
+    [switch]$Auto,
+    [switch]$Deep
+)
 
 # =============================================================================
 # CONFIGURACIÓN GLOBAL
 # =============================================================================
 
 $ErrorActionPreference = 'Continue'
+$Script:AutoMode = [bool]$Auto
 $Script:LogFile = Join-Path $env:TEMP "Optimizar-Windows10_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
 $Script:BackupDir = Join-Path $env:USERPROFILE "Optimizar-Windows10_Backup"
 
@@ -66,6 +83,15 @@ function Confirm-Action {
         [string]$Message,
         [switch]$DefaultNo
     )
+    # En modo automático se aceptan solo las acciones seguras (las que NO son DefaultNo).
+    if ($Script:AutoMode) {
+        if ($DefaultNo) {
+            Write-Log "[AUTO] Omitido (requiere confirmación manual): $Message" 'INFO'
+            return $false
+        }
+        Write-Log "[AUTO] Sí: $Message" 'INFO'
+        return $true
+    }
     if ($DefaultNo) {
         $r = Read-Host "$Message [s/N]"
         return ($r -match '^(s|si|sí|y|yes)$')
@@ -75,6 +101,7 @@ function Confirm-Action {
 }
 
 function Pause-Continue {
+    if ($Script:AutoMode) { return }
     Read-Host "`nPulsa Enter para continuar"
 }
 
@@ -645,6 +672,12 @@ function Optimize-Network {
         }
     }
 
+    # En modo automático no cambiamos los DNS del usuario (decisión de red personal).
+    if ($Script:AutoMode) {
+        Write-Log "[AUTO] DNS del sistema sin cambios (usa el menú manual para Cloudflare/Google)." 'INFO'
+        return
+    }
+
     Write-Host "`n  1. Configurar DNS Cloudflare (1.1.1.1 / 1.0.0.1)"
     Write-Host "  2. Configurar DNS Google (8.8.8.8 / 8.8.4.4)"
     Write-Host "  3. Restaurar DNS automático (DHCP)"
@@ -875,6 +908,46 @@ function Invoke-FullOptimization {
     }
 }
 
+function Invoke-AutoOptimization {
+    Write-Log "MODO AUTOMÁTICO: ejecutando optimizaciones seguras sin intervención" 'STEP'
+    Write-Log "No se desactiva Windows Update ni Defender. Todo reversible." 'INFO'
+
+    if (-not (Test-IsAdmin)) {
+        Write-Log "No se ejecuta como Administrador: algunos pasos se omitirán." 'WARN'
+    }
+
+    # 1. Punto de restauración (seguridad primero)
+    New-RestorePoint
+
+    # 2. Limpieza de temporales y papelera
+    Clear-TempFiles
+
+    # 3. Optimización de disco (TRIM en SSD / defrag en HDD)
+    Optimize-SystemDisk
+
+    # 4. Efectos visuales -> rendimiento
+    Set-VisualPerformance -Mode Performance
+
+    # 5. Red: solo limpiar caché DNS
+    Optimize-Network
+
+    # 6. Privacidad razonable (solo acciones seguras)
+    Set-PrivacySettings
+
+    # 7. Opcional profundo: DISM + SFC
+    if ($Deep) {
+        Repair-SystemFiles
+    }
+    else {
+        Write-Log "DISM/SFC omitido (usa -Deep para incluirlo)." 'INFO'
+    }
+
+    Write-Log "OPTIMIZACIÓN AUTOMÁTICA COMPLETADA." 'OK'
+    Write-Log "Log detallado: $Script:LogFile" 'INFO'
+    Write-Log "Backups (para revertir): $Script:BackupDir" 'INFO'
+    Write-Log "Reinicia el PC para aplicar todos los cambios." 'WARN'
+}
+
 function Show-MaintenanceSchedule {
     Write-Log "12. Rutina de mantenimiento periódico" 'STEP'
 
@@ -988,6 +1061,15 @@ function Main {
     }
 
     Write-Log "Script iniciado. Log: $Script:LogFile" 'INFO'
+
+    # Modo automático: ejecuta todo y termina, sin menú.
+    if ($Script:AutoMode) {
+        Show-Banner
+        Show-SystemInfo
+        Invoke-AutoOptimization
+        Write-Host "`nProceso automático finalizado. Revisa el log arriba." -ForegroundColor Green
+        return
+    }
 
     do {
         $choice = Show-MainMenu
