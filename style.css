@@ -1,0 +1,225 @@
+:root {
+  --bg: #0f172a;
+  --bg-2: #1e293b;
+  --panel: #111c34;
+  --accent: #22c55e;
+  --accent-2: #16a34a;
+  --food: #f43f5e;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --grid: #16233f;
+  --radius: 16px;
+  --shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background: radial-gradient(1200px 600px at 50% -10%, #1b2a4a 0%, var(--bg) 55%);
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 20px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.game {
+  width: min(440px, 100%);
+  background: linear-gradient(180deg, var(--panel), #0c1526);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px;
+}
+
+.game__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.game__title {
+  font-size: 1.7rem;
+  letter-spacing: 0.5px;
+}
+
+.scoreboard {
+  display: flex;
+  gap: 10px;
+}
+
+.score {
+  background: var(--bg-2);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 12px;
+  padding: 8px 14px;
+  min-width: 72px;
+  text-align: center;
+}
+
+.score__label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+.score__value {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.board-wrap {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+#board {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 5% 5%,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 5% 5%,
+    #0b1424;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(8, 15, 30, 0.78);
+  backdrop-filter: blur(4px);
+  transition: opacity 0.25s ease;
+}
+
+.overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.overlay__card {
+  text-align: center;
+  padding: 26px;
+  max-width: 300px;
+}
+
+.overlay__title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.overlay__text {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.btn {
+  flex: 1;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg-2);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 12px;
+  padding: 12px 16px;
+  transition: transform 0.08s ease, background 0.2s ease, opacity 0.2s ease;
+}
+
+.btn:hover {
+  background: #26344f;
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  width: 100%;
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  border: none;
+  color: #052e16;
+  font-size: 1.1rem;
+  padding: 14px 20px;
+}
+
+.btn--primary:hover {
+  filter: brightness(1.06);
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+}
+
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 8px;
+  max-width: 220px;
+  margin: 18px auto 4px;
+}
+
+.dpad__btn {
+  aspect-ratio: 1 / 1;
+  font-size: 1.2rem;
+  color: var(--text);
+  background: var(--bg-2);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.dpad__btn:active {
+  background: var(--accent);
+  color: #052e16;
+}
+
+.dpad__up { grid-column: 2; grid-row: 1; }
+.dpad__left { grid-column: 1; grid-row: 2; }
+.dpad__down { grid-column: 2; grid-row: 2; }
+.dpad__right { grid-column: 3; grid-row: 2; }
+
+.game__footer {
+  margin-top: 14px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dpad {
+    display: none;
+  }
+}
