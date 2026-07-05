@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Snake · Juego</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="game">
+    <header class="game__header">
+      <h1 class="game__title">🐍 Snake</h1>
+      <div class="scoreboard">
+        <div class="score">
+          <span class="score__label">Puntos</span>
+          <span class="score__value" id="score">0</span>
+        </div>
+        <div class="score">
+          <span class="score__label">Récord</span>
+          <span class="score__value" id="best">0</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="board-wrap">
+      <canvas id="board" width="400" height="400" aria-label="Tablero del juego Snake"></canvas>
+
+      <div class="overlay" id="overlay">
+        <div class="overlay__card">
+          <h2 class="overlay__title" id="overlayTitle">¿Listo para jugar?</h2>
+          <p class="overlay__text" id="overlayText">
+            Usa las flechas o <b>WASD</b>. En móvil, desliza o usa los botones.
+          </p>
+          <button class="btn btn--primary" id="startBtn">Jugar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="pauseBtn" disabled>Pausa</button>
+      <button class="btn" id="restartBtn">Reiniciar</button>
+    </div>
+
+    <div class="dpad" aria-hidden="false">
+      <button class="dpad__btn dpad__up" data-dir="up" aria-label="Arriba">▲</button>
+      <button class="dpad__btn dpad__left" data-dir="left" aria-label="Izquierda">◀</button>
+      <button class="dpad__btn dpad__right" data-dir="right" aria-label="Derecha">▶</button>
+      <button class="dpad__btn dpad__down" data-dir="down" aria-label="Abajo">▼</button>
+    </div>
+
+    <footer class="game__footer">
+      <p>Flechas / WASD para moverte · Espacio o P para pausar</p>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
