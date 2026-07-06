@@ -721,9 +721,10 @@ function throwGrenade(){
   player.grens--;
   const a = player.facing;
   const d = clamp(dist(player, screenToWorld(mouse.x,mouse.y)), 120, 460);
+  // 3.3 compensa el rozamiento para que caiga cerca del cursor
   grenades.push({
     x:player.x+Math.cos(a)*20, y:player.y+Math.sin(a)*20,
-    dx:Math.cos(a)*d*1.35, dy:Math.sin(a)*d*1.35,
+    dx:Math.cos(a)*d*3.3, dy:Math.sin(a)*d*3.3,
     fuse:1.15, owner:player, r:6
   });
   SFX.grenadeThrow();
